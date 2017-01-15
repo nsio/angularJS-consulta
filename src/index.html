@@ -5,7 +5,7 @@
 		<link rel="stylesheet" href="bootstrap.css">
 		<style>
 			.jumbotron{
-				width: 400px;
+				width: 600px;
 				text-align: center;
 				margin-right: auto;
 				margin-left: auto;
@@ -20,23 +20,32 @@
 		</style>
 		<script type="text/javascript" src="jquery-3.1.1.min.js"></script>
 		<script type="text/javascript" src="angular.js"></script>
+		<script type="text/javascript" src="angular-locale_pt-br.js"></script>
 		<script type="text/javascript" src="angular-messages.js"></script>
 		<script type="text/javascript">
 			angular.module("listaTelefonica", ["ngMessages"]);
-			angular.module("listaTelefonica").controller("LTController", function($scope){
+			angular.module("listaTelefonica").controller("LTController", function($scope, $http){
 				$scope.app = "Lista Telefonica";
 				$scope.classe = "selecionado, negrito";
+
+				// EXEMPLO DE CHAMDA AO BACKEND
+				var carregarDados = function (){
+					$http.get("https://api.hgbrasil.com/weather/?format=json&cid=BRXX0198").success(function(data, status){
+						console.log(data);
+					});
+				};
+
 				$scope.contatos = [
-					{nome:"Pedro", telefone: "999999999", cor: "yellow"},
-					{nome:"Ana", telefone: "999999988", cor: "blue"},
-					{nome:"Maria", telefone: "999999977", cor: "red"}
+					{nome:"Pedro", telefone: "999999999", data: new Date(), operadora: {nome: "Oi", codigo: 14, categoria: "Celular"}, cor: "yellow"},
+					{nome:"Ana", telefone: "999999988", data: new Date(), operadora: {nome: "Tim", codigo: 41, categoria: "Celular"}, cor: "blue"},
+					{nome:"Maria", telefone: "999999977", data: new Date(), operadora: {nome: "Vivo", codigo: 15, categoria: "Celular"}, cor: "red"}
 				];
 				$scope.operadoras = [
-					{nome: "Oi", codigo: 14, categoria: "Celular"},
-					{nome: "Tim", codigo: 41, categoria: "Celular"},
-					{nome: "Vivo", codigo: 15, categoria: "Celular"},
-					{nome: "GVT", codigo: 15, categoria: "Fixo"},
-					{nome: "Embratel", codigo: 15, categoria: "Fixo"}
+					{nome: "Oi", codigo: 14, categoria: "Celular", preco: 2},
+					{nome: "Tim", codigo: 41, categoria: "Celular", preco: 1},
+					{nome: "Vivo", codigo: 15, categoria: "Celular", preco: 3},
+					{nome: "GVT", codigo: 15, categoria: "Fixo", preco: 2},
+					{nome: "Embratel", codigo: 15, categoria: "Fixo", preco: 1}
 				];
 				$scope.addContato = function(contato){
 					$scope.contatos.push(angular.copy(contato));
@@ -66,26 +75,39 @@
 						return contato.selecionado;
 					});
 				};
+				$scope.ordenarPorNome = function (campo){
+					$scope.criterioOrdenacao = campo;
+					$scope.direcaoOrdenacao = !$scope.direcaoOrdenacao;
+				};
+
+
+				carregarDados();
+
 			});
 		</script>
 	</head>
 	<body ng-controller="LTController">
 		<div class="jumbotron">
+			<!-- EXEMPLO DO FILTRO NUMBER -->
+			{{100 | number:2}}
 			<h4 ng-bind="app"></h4>
+			<input class="form-control" type="text" ng-model="busca" placeholder="O que você está buscando?" />
 			<table class="table" ng-show="contatos.length > 0">
 				<tr>
 					<th></th>
-					<th>Nome</th>
-					<th>Telefone</th>
+					<th><a href="" ng-click="ordenarPorNome('nome')">Nome</a></th>
+					<th><a href="" ng-click="ordenarPorNome('telefone')">Telefone</a></th>
 					<th>Operadora</th>
+					<th>Data</th>
 				</tr>
 				<!-- ATENÇÃO AOS NOMES DAS CLASSES, E AS DEFINIÇÕES DINAMICAS NO OBJETO CONTATO 
 					ATENÇÃO TAMBÉM, NO NG-MODEL DO CHECKBOX, POIS É A OPÇÃO QUE DETERMINA SE A CLASSE SERÁ OU NÃO ADICIONADA AO OBJETO
 				-->
-				<tr ng-class="{selecionado: contato.selecionado, negrito: contato.selecionado}" ng-repeat="contato in contatos">
+				<tr ng-class="{selecionado: contato.selecionado, negrito: contato.selecionado}" ng-repeat="contato in contatos | filter:busca | orderBy:criterioOrdenacao:direcaoOrdenacao">
 					<td><input type="checkbox" ng-model="contato.selecionado"></td>
-					<td>{{contato.nome}}</td>
+					<td>{{contato.nome | uppercase}}</td>
 					<td>{{contato.telefone}}</td>
+					<td>{{contato.data | date:'dd/MM/yyyy HH:mm'}}</td>
 					<td>{{contato.operadora.nome}}</td>
 					<td><div style="width: 20px; height: 20px;" ng-style="{'background-color': contato.cor}"></div></td>
 				</tr>
@@ -111,7 +133,7 @@
 
 				<!-- ********************************************************************************************************* -->
 
-				<select class="form-control" ng-model="contato.operadora" ng-options="operadora.nome group by operadora.categoria for operadora in operadoras">
+				<select class="form-control" ng-model="contato.operadora" ng-options="operadora.nome + '( ' + (operadora.preco | currency) + ' )' group by operadora.categoria for operadora in operadoras">
 					<option value="">Selecione uma Operadora</option>
 				</select>
 			</form>
