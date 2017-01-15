@@ -1,0 +1,170 @@
+<html ng-app="listaTelefonica">
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Lista Telefonica</title>
+		<link rel="stylesheet" href="bootstrap.css">
+		<style>
+			.jumbotron{
+				width: 400px;
+				text-align: center;
+				margin-right: auto;
+				margin-left: auto;
+				margin-top: 20px;
+			}
+			.selecionado{
+				background-color: yellow;
+			}
+			.negrito{
+				font-weight: bold;
+			}
+		</style>
+		<script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+		<script type="text/javascript" src="angular.js"></script>
+		<script type="text/javascript" src="angular-messages.js"></script>
+		<script type="text/javascript">
+			angular.module("listaTelefonica", ["ngMessages"]);
+			angular.module("listaTelefonica").controller("LTController", function($scope){
+				$scope.app = "Lista Telefonica";
+				$scope.classe = "selecionado, negrito";
+				$scope.contatos = [
+					{nome:"Pedro", telefone: "999999999", cor: "yellow"},
+					{nome:"Ana", telefone: "999999988", cor: "blue"},
+					{nome:"Maria", telefone: "999999977", cor: "red"}
+				];
+				$scope.operadoras = [
+					{nome: "Oi", codigo: 14, categoria: "Celular"},
+					{nome: "Tim", codigo: 41, categoria: "Celular"},
+					{nome: "Vivo", codigo: 15, categoria: "Celular"},
+					{nome: "GVT", codigo: 15, categoria: "Fixo"},
+					{nome: "Embratel", codigo: 15, categoria: "Fixo"}
+				];
+				$scope.addContato = function(contato){
+					$scope.contatos.push(angular.copy(contato));
+					delete $scope.contato;
+					// Reseta as mensagens de validação na tela.
+					$scope.contatoForm.$setPristine();
+				};
+				$scope.apagarContatos = function (contatos){
+					// Esse bloco é um exemplo da função FILTER que o javascript disponibiliza
+					// podemos passar uma função para filter e extrais apenas os contatos que estão selecionados
+					var contatosSelecionados = contatos.filter(function(contato){
+						if(contato.selecionado){
+							return contato;	
+						}
+					});
+					// Para excluir, vamos usar a função filter e substituir o array original pelo
+					// pelo array retornar pela função filter apenas com os valores não estão selecionados
+					$scope.contatos = contatos.filter(function(contato){
+						if(!contato.selecionado){
+							return contato;	
+						}
+					});
+				};
+				$scope.isContatoSelecionado = function (contatos){
+					// Nessa funcção SOME, se um contato for true, volta true
+					return contatos.some(function(contato){
+						return contato.selecionado;
+					});
+				};
+			});
+		</script>
+	</head>
+	<body ng-controller="LTController">
+		<div class="jumbotron">
+			<h4 ng-bind="app"></h4>
+			<table class="table" ng-show="contatos.length > 0">
+				<tr>
+					<th></th>
+					<th>Nome</th>
+					<th>Telefone</th>
+					<th>Operadora</th>
+				</tr>
+				<!-- ATENÇÃO AOS NOMES DAS CLASSES, E AS DEFINIÇÕES DINAMICAS NO OBJETO CONTATO 
+					ATENÇÃO TAMBÉM, NO NG-MODEL DO CHECKBOX, POIS É A OPÇÃO QUE DETERMINA SE A CLASSE SERÁ OU NÃO ADICIONADA AO OBJETO
+				-->
+				<tr ng-class="{selecionado: contato.selecionado, negrito: contato.selecionado}" ng-repeat="contato in contatos">
+					<td><input type="checkbox" ng-model="contato.selecionado"></td>
+					<td>{{contato.nome}}</td>
+					<td>{{contato.telefone}}</td>
+					<td>{{contato.operadora.nome}}</td>
+					<td><div style="width: 20px; height: 20px;" ng-style="{'background-color': contato.cor}"></div></td>
+				</tr>
+			</table>
+			<hr>
+			<form name="contatoForm">
+				<input class="form-control" type="text" ng-model="contato.nome" name="nome" ng-required="true" ng-minlength="10"/>
+				<input class="form-control" type="text" ng-model="contato.telefone" name="telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/"/>
+				<!-- 
+				<select class="form-control" ng-model="contato.operadora" ng-options="operadora.nome for operadora in operadoras">
+					<option value="">Selecione uma Operadora</option>
+				</select>
+				-->
+				
+				<!-- ********************************************************************************************************* -->
+
+				<!-- Na expression ng-options, o primeiro termo antes do AS é o valor que será adicionado no value do option, e em seguida o valor 	que será adicionado labe do option
+				Isso depende do BackEnd, se a API está esperado o código é mais definir o value com o codigo e envia diretamente para o Service na chamada do WebService
+				<select class="form-control" ng-model="contato.operadora" ng-options="oepradora.codigo as operadora.nome for operadora in operadoras">
+					<option value="">Selecione uma Operadora</option>
+				</select>
+				-->
+
+				<!-- ********************************************************************************************************* -->
+
+				<select class="form-control" ng-model="contato.operadora" ng-options="operadora.nome group by operadora.categoria for operadora in operadoras">
+					<option value="">Selecione uma Operadora</option>
+				</select>
+			</form>
+
+			<div ng-messages="contatoForm.nome.$error">
+				<div ng-message="required && contatoForm.nome.$dirty" class="alert alert-danger">
+					Por favor, preencha o nome.
+				</div>
+				<div ng-message="minlength" class="alert alert-danger">
+					Por favor, o campo nome não pode ter menos que 10 caracteres.
+				</div>	
+			</div>
+
+			<div ng-messages="contatoForm.telefone.$error">
+				<div ng-message="required && contatoForm.telefone.$dirty" class="alert alert-danger">
+					Por favor, preencha o telefone.
+				</div>
+				<div ng-message="pattern" class="alert alert-danger">
+					Por favor, o campo telefone deve ter o formato DDDD-DDDD.
+				</div>	
+			</div>
+
+			<!-- MENSAGENS DE VALIDAÇÃO 
+			<div ng-show="contatoForm.nome.$error.required && contatoForm.nome.$dirty" class="alert alert-danger">
+				Por favor, preencha o nome.
+			</div>
+			<div ng-show="contatoForm.nome.$error.minlength" class="alert alert-danger">
+				Por favor, o campo nome não pode ter menos que 10 caracteres.
+			</div>
+			<div ng-show="contatoForm.telefone.$error.required && contatoForm.telefone.$dirty" class="alert alert-danger">
+				Por favor, preencha o telefone.
+			</div>
+			<div ng-show="contatoForm.telefone.$error.pattern" class="alert alert-danger">
+				Por favor, o campo telefone deve ter o formato DDDD-DDDD.
+			</div>			
+			-->
+
+			<button class="btn btn-primary btn-block" ng-click="addContato(contato)" ng-disabled="contatoForm.$invalid">
+				Adicionar Contato
+			</button>
+
+			<!--***************************************************************************************************************-->
+			<!-- SE FOR UM ELEMENTO SIMPLES, USE NG-SHOW OU NG-HIDE, SE FOR UM ELEMENTO QUE UM LOADING DE RECURSOS USE O NG-IF -->
+			<!--***************************************************************************************************************-->
+			
+			<!-- Quando se usa o ng-show, o elemento continua existindo, fica apenas escondindo da exibição -->
+			<!-- PARA PERFORMANCE O IDEAL É USAR O NG-IF, HÁ UMA INTERAÇÃO COM O DOM, E O ELEMENTO É RETIRADO DA ARVORE DE COMPONENTES, ASSIM O ELEMENTO NÃO É CARREGADO. SOMENTE QUANDO A CONDIÇÃO É ACEITA -->
+			<button class="btn btn-danger btn-block" ng-click="apagarContatos(contatos)" ng-show="isContatoSelecionado(contatos)">
+				Apagar Contatos
+			</button>
+		</div>
+
+		<div ng-include="'footer.html'"></div>
+
+	</body>
+</html>
