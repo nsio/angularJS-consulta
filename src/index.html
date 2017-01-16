@@ -28,13 +28,30 @@
 				$scope.app = "Lista Telefonica";
 				$scope.classe = "selecionado, negrito";
 
+				$scope.contatos = [];
+				$scope.operadoras = [];
 				// EXEMPLO DE CHAMDA AO BACKEND
-				var carregarDados = function (){
-					$http.get("https://api.hgbrasil.com/weather/?format=json&cid=BRXX0198").success(function(data, status){
-						console.log(data);
+				var carregarContatos = function (){
+					$http.get("http://localhost:8080/contatos").then(function(response){
+						//var data = response.data;
+					    //var status = response.status;
+					    //var statusText = response.statusText;
+					    //var headers = response.headers;
+					    //var config = response.config;
+
+						$scope.contatos = response.data;
+					}).catch(function(response){
+						$scope.message = "Houve um erro carregar a lista de contatos" + response.data;
 					});
 				};
 
+				var carregarOperadoras = function (){
+					$http.get("http://localhost:8080/operadoras").then(function(response){
+						$scope.operadoras = response.data;
+					});
+				};
+
+				/*
 				$scope.contatos = [
 					{nome:"Pedro", telefone: "999999999", data: new Date(), operadora: {nome: "Oi", codigo: 14, categoria: "Celular"}, cor: "yellow"},
 					{nome:"Ana", telefone: "999999988", data: new Date(), operadora: {nome: "Tim", codigo: 41, categoria: "Celular"}, cor: "blue"},
@@ -47,11 +64,28 @@
 					{nome: "GVT", codigo: 15, categoria: "Fixo", preco: 2},
 					{nome: "Embratel", codigo: 15, categoria: "Fixo", preco: 1}
 				];
+				*/
+
 				$scope.addContato = function(contato){
+
+					// *************************************************************************
+					// *************************************************************************
+								//$http.post("http://localhost:8080/addContato", contato);
+					// *************************************************************************
+					// *************************************************************************
+
 					$scope.contatos.push(angular.copy(contato));
 					delete $scope.contato;
 					// Reseta as mensagens de validação na tela.
 					$scope.contatoForm.$setPristine();
+
+					// EM NÍVEL DE PERFORMANCE, NÃO É INTERESSANTE FAZER ESSE RELOAD, DEPENDE DO CENÁRIO
+					// O IDEIAL É RECUPERAR A ENTIDADE RETORNADA ATRAVÉS DO CREATE, RETORNANDO UM STATUS 201 DO SERVER,
+					// PEGAR ESSA ENTIDADE E FAZER ANGULAR.COPY;
+					// DENOVO, DEPENDE DO CENÁRIO, AS VEZES RECARREGAR A LISTA É OK;
+					carregarContatos();
+
+
 				};
 				$scope.apagarContatos = function (contatos){
 					// Esse bloco é um exemplo da função FILTER que o javascript disponibiliza
@@ -79,9 +113,9 @@
 					$scope.criterioOrdenacao = campo;
 					$scope.direcaoOrdenacao = !$scope.direcaoOrdenacao;
 				};
-
-
-				carregarDados();
+				
+				carregarContatos();
+				carregarOperadoras();
 
 			});
 		</script>
@@ -90,6 +124,7 @@
 		<div class="jumbotron">
 			<!-- EXEMPLO DO FILTRO NUMBER -->
 			{{100 | number:2}}
+			{{message}}
 			<h4 ng-bind="app"></h4>
 			<input class="form-control" type="text" ng-model="busca" placeholder="O que você está buscando?" />
 			<table class="table" ng-show="contatos.length > 0">
