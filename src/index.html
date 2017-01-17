@@ -2,94 +2,26 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<title>Lista Telefonica</title>
-		<link rel="stylesheet" href="bootstrap.css">
-		<style>
-			.jumbotron{
-				width: 600px;
-				text-align: center;
-				margin-right: auto;
-				margin-left: auto;
-				margin-top: 20px;
-			}
-			.selecionado{
-				background-color: yellow;
-			}
-			.negrito{
-				font-weight: bold;
-			}
-		</style>
-		<script type="text/javascript" src="jquery-3.1.1.min.js"></script>
-		<script type="text/javascript" src="angular.js"></script>
-		<script type="text/javascript" src="angular-locale_pt-br.js"></script>
-		<script type="text/javascript" src="angular-messages.js"></script>
-		<script type="text/javascript">
-			angular.module("listaTelefonica", ["ngMessages"]);
-			angular.module("listaTelefonica").controller("LTController", function($scope, $http){
-				$scope.app = "Lista Telefonica";
-				$scope.classe = "selecionado, negrito";
 
-				// EXEMPLO DE CHAMDA AO BACKEND
-				var carregarDados = function (){
-					$http.get("https://api.hgbrasil.com/weather/?format=json&cid=BRXX0198").success(function(data, status){
-						console.log(data);
-					});
-				};
+		<link rel="stylesheet" href="css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="css/app.css">
+		
+		<script type="text/javascript" src="lib/angular/angular.js"></script>
+		<script type="text/javascript" src="lib/angular/angular-locale_pt-br.js"></script>
+		<script type="text/javascript" src="lib/angular/angular-messages.js"></script>
+		
+		<!-- IMPORTAÇÃO DO ARQUIVO QUE FAZ A DECLARAÇÃO DOS MÓDULOS -->
+		<script type="text/javascript" src="js/app.js"></script>
 
-				$scope.contatos = [
-					{nome:"Pedro", telefone: "999999999", data: new Date(), operadora: {nome: "Oi", codigo: 14, categoria: "Celular"}, cor: "yellow"},
-					{nome:"Ana", telefone: "999999988", data: new Date(), operadora: {nome: "Tim", codigo: 41, categoria: "Celular"}, cor: "blue"},
-					{nome:"Maria", telefone: "999999977", data: new Date(), operadora: {nome: "Vivo", codigo: 15, categoria: "Celular"}, cor: "red"}
-				];
-				$scope.operadoras = [
-					{nome: "Oi", codigo: 14, categoria: "Celular", preco: 2},
-					{nome: "Tim", codigo: 41, categoria: "Celular", preco: 1},
-					{nome: "Vivo", codigo: 15, categoria: "Celular", preco: 3},
-					{nome: "GVT", codigo: 15, categoria: "Fixo", preco: 2},
-					{nome: "Embratel", codigo: 15, categoria: "Fixo", preco: 1}
-				];
-				$scope.addContato = function(contato){
-					$scope.contatos.push(angular.copy(contato));
-					delete $scope.contato;
-					// Reseta as mensagens de validação na tela.
-					$scope.contatoForm.$setPristine();
-				};
-				$scope.apagarContatos = function (contatos){
-					// Esse bloco é um exemplo da função FILTER que o javascript disponibiliza
-					// podemos passar uma função para filter e extrais apenas os contatos que estão selecionados
-					var contatosSelecionados = contatos.filter(function(contato){
-						if(contato.selecionado){
-							return contato;	
-						}
-					});
-					// Para excluir, vamos usar a função filter e substituir o array original pelo
-					// pelo array retornar pela função filter apenas com os valores não estão selecionados
-					$scope.contatos = contatos.filter(function(contato){
-						if(!contato.selecionado){
-							return contato;	
-						}
-					});
-				};
-				$scope.isContatoSelecionado = function (contatos){
-					// Nessa funcção SOME, se um contato for true, volta true
-					return contatos.some(function(contato){
-						return contato.selecionado;
-					});
-				};
-				$scope.ordenarPorNome = function (campo){
-					$scope.criterioOrdenacao = campo;
-					$scope.direcaoOrdenacao = !$scope.direcaoOrdenacao;
-				};
+		<!-- IMPORTAÇÃO DO CONTROLLER PARA ESTA VIEW -->
+		<script type="text/javascript" src="js;controllers/LTController.js"></script>
 
-
-				carregarDados();
-
-			});
-		</script>
 	</head>
 	<body ng-controller="LTController">
 		<div class="jumbotron">
 			<!-- EXEMPLO DO FILTRO NUMBER -->
 			{{100 | number:2}}
+			{{message}}
 			<h4 ng-bind="app"></h4>
 			<input class="form-control" type="text" ng-model="busca" placeholder="O que você está buscando?" />
 			<table class="table" ng-show="contatos.length > 0">

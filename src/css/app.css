@@ -1,0 +1,13 @@
+.jumbotron{
+	width: 600px;
+	text-align: center;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: 20px;
+}
+.selecionado{
+	background-color: yellow;
+}
+.negrito{
+	font-weight: bold;
+}
