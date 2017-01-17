@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	
+	<head>
+		<title></title>
+	</head>
+
+	<!-- A diretriva ng-init permiti inicializar variáveis -->
+	<body ng-app ng-init="nome = 'angular'; lista = [1,2,3]">
+
+		{{ 5 + 5}}
+		{{nome}}
+
+		<br/>
+		<h4>Exemplo de Binding</h4>
+
+		<!-- A diretiva ng-model faz o binding com a variável nome -->
+		<input type="text" name="nome" ng-model="nome"> <button ng-click="lista.push(nome);nome = '';">Adicionar</button>
+
+		<br>
+		<ul>
+			<!-- A variável $index, retorna o index da interação -->
+			<li ng-repeat="item in lista">Item {{item}} [{{$index}}] 
+				<button ng-click="lista.splice($index, 1)">X</button>
+			</li>
+		</ul>
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.32/angular.min.js"></script>
+
+	</body>
+
+</html>
