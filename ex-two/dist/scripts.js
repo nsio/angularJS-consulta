@@ -11,10 +11,11 @@ app.controller("myController", require('./myController'));
 
 },{"./myController":3}],3:[function(require,module,exports){
 module.exports = function ($scope) {
-	$scope.name = 'Angular - Treino';
+	$scope.name = 'Angular - Treino - verificar gulp watch => browserify';
 
 	$scope.click = () => {
 		alert('Hello');
+		debugger;
 	};
 };
 
