@@ -1,0 +1,46 @@
+	<div class="breadcrumb">
+		<!-- Para ativar o one-way-data-binding usar :: exemplo {{::nomePizza}} -->
+		Sabores > Customização > {{Pizza.nome}}
+	</div>
+
+	<div class="fieldset">
+		<label class="label">Nome:</label>
+		<input type="text" ng-model="Pizza.nome">
+	</div>
+	
+	<div class="fieldset">
+		<label class="label">Formato:</label>
+		Redonda: <input type="radio" ng-model="Pizza.formato" value="Redonda">
+		Quadrada: <input type="radio" ng-model="Pizza.formato" value="Quadrada">
+		<div ng-class="formatoPizza()"></div>
+	</div>
+
+	<div class="fieldset">
+		<label class="label">Tipo de Venda:</label>
+		Entrega: <input type="radio" ng-model="Pizza.local" value="Entrega">
+		Local: <input type="radio" ng-model="Pizza.local" value="Local">
+		
+	</div>
+
+	<div class="fieldset" ng-if="Pizza.local === 'Entrega'">
+		<label class="label">Endereço:</label>
+		<textarea ng-model="Pizza.enderco"></textarea>
+	</div>
+
+	<div class="fieldset">
+		<label class="label">Ingredientes:</label>
+		<input type="text" ng-model="Ingrediente.novo">
+		<button ng-click="Ingrediente.inserir()">Adicionar</button>
+		<ul class="ingredientes">
+			<li ng-repeat="ingrediente in Pizza.ingredientes | filter : filtro">
+				<span>{{ingrediente}}</span>
+				<button ng-click="Ingrediente.remover($index)">X</button>
+			</li>
+		</ul>
+	</div>
+
+	Filtro:<input type="text" ng-model="filtro">
+
+	<div class="fieldset">
+		<b>Total: </b> {{precoPizza() | reaisFilter : 2}}
+	</div>

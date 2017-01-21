@@ -1,0 +1,95 @@
+html,body{
+    margin: 10px;
+    height: 100%;
+    font-size: 1.2em;
+}
+
+textarea{
+    resize: vertical;
+    height: 60px;
+}
+
+.breadcrumb{
+    margin-bottom: 50px;
+    font-weight: bold;
+}
+
+.fieldset{
+    margin-bottom: 20px;
+}
+
+.fieldset input{
+    height: 25px;
+}
+
+.fieldset input[type=text], .fieldset textarea{
+    width: calc(100% - 300px);
+}
+
+.fieldset button{
+    height: 30px;
+    cursor: pointer;
+}
+
+.label{
+    width: 150px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.pizza-formato{
+    margin: 10px auto;
+    border: 5px solid black;
+    width: 50px;
+    height: 50px;
+    transition: all 0.5s ease;
+}
+
+.pizza-redonda{
+    border-radius: 30px;
+}
+
+.radio-button{
+    display: inline-block;
+    cursor: pointer;
+}
+
+.radio-button ul{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.radio-button li{
+    border: 1px solid black;
+    display: inline-block;
+    padding: 10px 20px;
+    margin-left: -1px;
+    transition: all 0.3s ease;
+}
+
+.radio-button li.isSelected{
+    background-color: dodgerblue;
+    color: #fff;
+}
+
+
+.ingredientes li span{
+    display: inline-block;
+    min-width: 200px;
+}
+
+.ingredientes li button{
+    width: 30px;
+    background-color: #F33030;
+    color: white;
+    border-radius: 30px;
+    border: 0;
+}
+
+.error-message{
+    font-size: 0.8em;
+    color: red;
+    text-align: center;
+    margin: 0px auto 20px;
+}
