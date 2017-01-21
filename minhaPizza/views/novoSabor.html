@@ -6,20 +6,18 @@
 	<div class="fieldset">
 		<label class="label">Nome:</label>
 		<input type="text" ng-model="Pizza.nome">
+		<button ng-click="nomeAleatorio()">Nome Aleatorio</button>
 	</div>
 	
 	<div class="fieldset">
 		<label class="label">Formato:</label>
-		Redonda: <input type="radio" ng-model="Pizza.formato" value="Redonda">
-		Quadrada: <input type="radio" ng-model="Pizza.formato" value="Quadrada">
+		<radio-button options="['Redonda','Quadrada']" value="Pizza.formato"></radio-button>
 		<div ng-class="formatoPizza()"></div>
 	</div>
 
 	<div class="fieldset">
 		<label class="label">Tipo de Venda:</label>
-		Entrega: <input type="radio" ng-model="Pizza.local" value="Entrega">
-		Local: <input type="radio" ng-model="Pizza.local" value="Local">
-		
+		<radio-button options="['Entrega','Local']" value="Pizza.local"></radio-button>
 	</div>
 
 	<div class="fieldset" ng-if="Pizza.local === 'Entrega'">

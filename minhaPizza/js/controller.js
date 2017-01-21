@@ -1,8 +1,11 @@
 angular.module("minhaPizza")
-.controller("NSController",['$scope', function($scope){
+// $routeParams é um serviço que recolhe os params
+// que vierem através da URL
+.controller("NSController",['$scope', '$routeParams', 'FactoryNomes',
+							function($scope, $routeParams, FactoryNomes){
 	
 	$scope.Pizza = {
-		nome: "",
+		nome: $routeParams.nome,
 		formato: "Redonda",
 		local: "Entrega",
 		endereco: "",
@@ -30,6 +33,10 @@ angular.module("minhaPizza")
 		total += ($scope.Pizza.formato === 'Redonda' ? 2 : 5);
 		total += ($scope.Pizza.local === 'Entrega' ? 5 : 0);
 		return total;
+	};
+
+	$scope.nomeAleatorio = function(){
+		$scope.Pizza.nome = FactoryNomes();
 	};
 
 }]);
